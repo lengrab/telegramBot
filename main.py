@@ -1,50 +1,97 @@
+import importlib
 import logging
-import time
-
 import flask
 import telebot
+from telebot.types import CallbackQuery, Message
 
-API_TOKEN = ''
-WEBHOOK_PORT = 8444
-WEBHOOK_HOST = '127.0.0.1'
-WEBHOOK_URL = 'https://3eec-77-93-112-174.eu.ngrok.io'
+import config
+from model.bot_callbacks import Callbacks
+from services.weatherService import WeatherService
+from sessinon import Session
+from states.state import State, BaseState, AboutAuthorState, ChangeCityState, WeatherInfoState
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.DEBUG)
-bot = telebot.TeleBot(API_TOKEN)
+bot = telebot.TeleBot(config.API_TOKEN)
 app = flask.Flask(__name__)
-time.sleep(0.1)
+weather_service = WeatherService(config.OPENWEATHER_TOKEN)
 
 
-@bot.message_handler(commands=['help', 'start'])
-def send_welcome(message):
-    bot.reply_to(message,
-                 ("Hi there, I am EchoBot.\n"
-                  "I am here to echo your kind words back to you."))
+class User:
+    def __init__(self, id, city, state: State):
+        self.id = id
+        self.city = city
+        self.state = state.name
+        self.cached_message = None
 
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    bot.reply_to(message, message.text)
+session = Session(bot, weather_service)
+session.load()
 
 
-# Process webhook calls
-@app.route('/' + API_TOKEN, methods=['POST', 'GET'])
+def create_state_for_user(context: Session, id: int):
+    args = ()
+    kw = {"contex": session}
+    module = importlib.import_module('states.state')
+    klass = getattr(module, context.users[id].state)
+    state = klass(*args, **kw)
+    return state
+
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message: Message):
+    user_id = message.from_user.id
+
+    if user_id not in session.users:
+        session.users[user_id] = User(user_id, 'Москва', BaseState(session))
+
+    state = create_state_for_user(session, user_id)
+    state.handle(message)
+    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+
+
+@bot.message_handler(func=lambda message: True)
+def handle_message(message: Message):
+    state = create_state_for_user(session, message.from_user.id)
+    state.handle(message)
+    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle(call: CallbackQuery):
+    state = BaseState(session)
+
+    if call.data == Callbacks.GET_WEATHER:
+        state = WeatherInfoState(session)
+
+    elif call.data == Callbacks.CHANGE_CITY:
+        state = ChangeCityState(session)
+        session.users[call.from_user.id].state = state
+
+    elif call.data == Callbacks.ABOUT_AUTHOR:
+        state = AboutAuthorState(session)
+
+    elif call.data == Callbacks.BACK:
+        state = BaseState(session)
+
+    state.handle(call)
+    bot.answer_callback_query(call.id)
+
+
+@app.route('/' + config.API_TOKEN, methods=['POST'])
 def webhook():
-    logger.debug("gas")
     logger.debug(flask.request.get_data())
+
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
-
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
-
+        session.save()
         return '200'
     else:
         flask.abort(403)
 
 
 bot.remove_webhook()
-bot.set_webhook(WEBHOOK_URL + "/" + API_TOKEN)
-app.run(host=WEBHOOK_HOST,
-        port=WEBHOOK_PORT)
+bot.set_webhook(config.WEBHOOK_URL + "/" + config.API_TOKEN)
+app.run(host=config.WEBHOOK_HOST, port=config.WEBHOOK_PORT)
