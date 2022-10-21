@@ -1,5 +1,5 @@
 from telebot import types
-from model.bot_callbacks import Callbacks
+from bot_commands.bot_callbacks import Callbacks
 
 
 class WeatherKeyboards:

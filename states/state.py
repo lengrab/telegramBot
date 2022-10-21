@@ -1,6 +1,6 @@
 from telebot.types import Message, CallbackQuery
-from services.weather_keyboard import WeatherKeyboards
-from sessinon import Session
+from keyboards.keyboards import WeatherKeyboards
+from services.sessinon import Session
 
 
 class State:

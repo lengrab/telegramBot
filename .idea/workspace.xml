@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="101433f4-6b1f-45f6-a343-ec4c8b31ebe7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/bot_callbacks.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/open_weather.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/services/weatherService.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/services/weather_keyboard.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sessinon.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/states/state.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.pkl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bot_callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot_commands/bot_callbacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/weather_keyboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboards/keyboards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sessinon.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/sessinon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/states/state.py" beforeDir="false" afterPath="$PROJECT_DIR$/states/state.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +47,10 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\ITSchool\Программирование\Программирование - 2\telegramBot\bot_commands" />
       <recent name="F:\ITSchool\Программирование\Программирование - 2\telegramBot\services" />
+      <recent name="F:\ITSchool\Программирование\Программирование - 2\telegramBot" />
+      <recent name="F:\ITSchool\Программирование\Программирование - 2\telegramBot\keyboards" />
     </key>
   </component>
   <component name="RunManager">

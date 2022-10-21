@@ -12,14 +12,14 @@ class Session:
         self.weather_service = weather_service
 
     def save(self):
-        with open('data.pkl', 'wb') as outfile:
+        with open('../data.pkl', 'wb') as outfile:
             pickle.dump(self.users, outfile)
 
     def load(self):
-        if not os.path.exists('data.pkl'):
+        if not os.path.exists('../data.pkl'):
             return None
 
-        with open('data.pkl', 'rb') as json_file:
+        with open('../data.pkl', 'rb') as json_file:
             self.users = pickle.load(json_file)
 
         if self.users is None:

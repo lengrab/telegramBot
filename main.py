@@ -1,29 +1,21 @@
 import importlib
-import logging
+# import logging
 import flask
 import telebot
 from telebot.types import CallbackQuery, Message
 
 import config
-from model.bot_callbacks import Callbacks
+from bot_commands.bot_callbacks import Callbacks
+from model.user import User
 from services.weatherService import WeatherService
-from sessinon import Session
-from states.state import State, BaseState, AboutAuthorState, ChangeCityState, WeatherInfoState
+from services.sessinon import Session
+from states.state import BaseState, AboutAuthorState, ChangeCityState, WeatherInfoState
 
-logger = telebot.logger
-telebot.logger.setLevel(logging.DEBUG)
+# logger = telebot.logger
+# telebot.logger.setLevel(logging.DEBUG)
 bot = telebot.TeleBot(config.API_TOKEN)
 app = flask.Flask(__name__)
 weather_service = WeatherService(config.OPENWEATHER_TOKEN)
-
-
-class User:
-    def __init__(self, id, city, state: State):
-        self.id = id
-        self.city = city
-        self.state = state.name
-        self.cached_message = None
-
 
 session = Session(bot, weather_service)
 session.load()
@@ -80,7 +72,7 @@ def handle(call: CallbackQuery):
 
 @app.route('/' + config.API_TOKEN, methods=['POST'])
 def webhook():
-    logger.debug(flask.request.get_data())
+    # logger.debug(flask.request.get_data())
 
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
